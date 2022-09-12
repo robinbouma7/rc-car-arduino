@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--the ip and ports of the arduino-->
+<ip>192.168.4.1</ip>
+<gasport>2071</gasport>
+<steerport>2072</steerport>
+
+<!--analog stick deadzone-->
+<deadzone>2250</deadzone>
+
+<!--enable or disable gasspeed-->
+<limitgas>true</limitgas>
+<!--minimum time in ms it takes to go to full throttle-->
+<!--can be used as a sort of traction control-->
+<gasspeed>250</gasspeed>
+
+<!--same but with steering-->
+<dosteerspeed>true</dosteerspeed>
+<steerspeed>250</steerspeed>
+
+<!--log levels
+0 = only errors
+1 = most important debug messages and init messages
+2 = all the debug messages exept ones that will spam the console
+3 = all messages including ones that arent that important and happen frequently (not recommended)
+-->
+<loglevel>2</loglevel>
+
+<!--print the log to a log file-->
+<filelogging>true</filelogging>
+
+<!--fps limit-->
+<!--highly recommended to not overstress the arduino and correctly limit steer and throttle-->
+<limitfps>true</limitfps>
+<fpslimit>60</fpslimit>
