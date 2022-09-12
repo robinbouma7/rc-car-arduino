@@ -65,9 +65,9 @@ std::vector<SDL_Vertex> lefttri = {
 };
 std::vector<int> rightborder = {};
 std::vector<SDL_Vertex> righttri = {
-        { SDL_FPoint{ 700, 400 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //top
+        { SDL_FPoint{ 701, 400 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //top
         { SDL_FPoint{ 700, 550 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //right
-        { SDL_FPoint{ 700, 700 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //bottom
+        { SDL_FPoint{ 701, 700 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //bottom
 };
 SDL_Rect throttlerect;
 
@@ -240,8 +240,8 @@ int WinMain(int argc, char* argv[]) {
     std::cout << "gasspeed: " << gasspeed << "\n";
 
 
-    throttlerect.w = 90;
-    throttlerect.x = 605;
+    throttlerect.w = 89;
+    throttlerect.x = 606;
     throttlerect.y = 550;
     throttlerect.h = 0;
 
