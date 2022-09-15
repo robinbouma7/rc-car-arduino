@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--the ip and ports of the arduino-->
-<ip>192.168.4.1</ip>
+<ip>192.168.178.123</ip>
 <gasport>2071</gasport>
 <steerport>2072</steerport>
 

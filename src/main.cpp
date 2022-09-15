@@ -42,6 +42,11 @@ Sint16 xaxis;
 Sint16 enginedelta;
 Sint16 correctedgas;
 
+Sint16 oldengine;
+Sint16 oldsteer;
+
+bool sentzero = false;
+
 Uint64 totalgasspeed;
 float gasspeed;
 bool dogasspeed;
@@ -56,6 +61,8 @@ float framedelay;
 
 bool usingkeyboard = true;
 
+bool pingpressed;
+
 //steering triangles
 std::vector<std::array<int, 2>> leftborder;
 std::vector<SDL_Vertex> lefttri = {
@@ -66,7 +73,7 @@ std::vector<SDL_Vertex> lefttri = {
 std::vector<int> rightborder = {};
 std::vector<SDL_Vertex> righttri = {
         { SDL_FPoint{ 701, 400 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //top
-        { SDL_FPoint{ 700, 550 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //right
+        { SDL_FPoint{ 701, 550 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //right
         { SDL_FPoint{ 701, 700 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, }, //bottom
 };
 SDL_Rect throttlerect;
@@ -352,9 +359,13 @@ void handleEvents() {
 }
 void update() {
     const Uint8* keys = SDL_GetKeyboardState(NULL);
-    if(keys[SDL_SCANCODE_P]) {
+    oldengine = enginedelta;
+    oldsteer = xaxis;
+    if(keys[SDL_SCANCODE_P] && !pingpressed) {
         net->ping(1);
         net->ping(2);
+        pingpressed = true;
+        usingkeyboard = true;
     }
     if(connectedjoysticks > 0) {
         if(!keys[SDL_SCANCODE_LEFT] && !keys[SDL_SCANCODE_RIGHT] && !keys[SDL_SCANCODE_UP] && !keys[SDL_SCANCODE_DOWN]) {
@@ -373,9 +384,11 @@ void update() {
             brakeaxis = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
             xaxis = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
         }
-        if(SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START)) {
+        if(SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START) && !pingpressed) {
             net->ping(1);
             net->ping(2);
+            pingpressed = true;
+            usingkeyboard = false;
         }
 
     }
@@ -478,22 +491,39 @@ void update() {
     //steering
     if(xaxis > deadzone) {
         //right
-        righttri[1].position = {(700 + ((xaxis / 32767.0f) * 300)), 550};
+        righttri[1].position = {(701 + ((xaxis / 32767.0f) * 300)), 550};
         lefttri[1].position = {600, 550};
     }
     else if(xaxis < 0 - deadzone) {
         //left
         lefttri[1].position = {(600 + ((xaxis / 32768.0f) * 300)), 550};
-        righttri[1].position = {700, 550};
+        righttri[1].position = {701, 550};
     }
     else {
         //straight
         lefttri[1].position = {600, 550};
-        righttri[1].position = {700, 550};
+        righttri[1].position = {701, 550};
     }
-    
-    net->sendgas(enginedelta);
-    net->sendsteer(xaxis);
+    if(enginedelta != oldengine) {
+        net->sendgas(enginedelta);
+    }
+    if(oldsteer != xaxis) {
+        if(xaxis > deadzone || xaxis < 0 - deadzone) {
+            net->sendsteer(xaxis);
+            sentzero = false;
+        }
+        else if(!sentzero) {
+            net->sendsteer(0);
+            sentzero = true;
+        }
+        
+    }
+    if(usingkeyboard && !keys[SDL_SCANCODE_P]) {
+        pingpressed = false;
+    }
+    if(connectedjoysticks > 0 && pingpressed && !usingkeyboard && !SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START)) {
+        pingpressed = false;
+    }
 }
 void render() {
     
@@ -532,7 +562,7 @@ void render() {
         tex.drawFont_NW("gas: disconnected", font, red, 5, 5);
     }
     if(net->steerconnected) {
-        tex.drawFont_NW(("steer: connected (" + std::to_string(net->steerpingtime) + ")").c_str(), font, white, 5, 55);
+        tex.drawFont_NW(("steer: connected (" + std::to_string(net->steerpingtime) + ")").c_str(), font, white, 5, 30);
     }
     else {
         tex.drawFont_NW("steer: disconnected", font, red, 5, 30);

@@ -55,8 +55,9 @@ bool Networking::connect(const char* address) {
 
     return true;
 }
-void Networking::sendgas(Sint16 gasvalue) {
-    std::string gasstring = std::to_string((int)gasvalue);
+void Networking::sendgas(Sint16 gas) {
+    int gasvalue = ((int)gas / 32767.0F) * 255;
+    std::string gasstring = std::to_string(gasvalue);
 
     gaspacket->data = (unsigned char*)(gasstring.c_str());
     gaspacket->len = strlen((char *)gaspacket->data) + 1;
@@ -73,13 +74,14 @@ void Networking::sendsteer(Sint16 steervalue) {
 }
 void Networking::ping(int type) {
     const char* pingmsg = "PING";
-
+    Uint64 starttime;
     if(type == 1) {
         Log::log("pinging throttle port", 1);
         gaspacket->data = (unsigned char*)pingmsg;
         gaspacket->len = strlen((char *)gaspacket->data) + 1;
 
         SDLNet_UDP_Send(socket, -1, gaspacket);
+        starttime = SDL_GetTicks64();
 
     }
     else if(type == 2) {
@@ -88,15 +90,17 @@ void Networking::ping(int type) {
         steerpacket->len = strlen((char *)steerpacket->data) + 1;
 
         SDLNet_UDP_Send(socket, -1, steerpacket);
+        starttime = SDL_GetTicks64();
     }
     else {
         Log::log("port type is incorrect", 2);
         return;
     }
 
-    Uint64 starttime = SDL_GetTicks64();
+    
     bool gotresponse = false;
-    while(starttime + 1000 >= SDL_GetTicks64()) {
+    bool waiting = true;
+    while(waiting) {
         if(SDLNet_UDP_Recv(socket, packetin)) {
             if(type == 1) {
                 gaspingtime = SDL_GetTicks64() - starttime;
@@ -109,8 +113,10 @@ void Networking::ping(int type) {
             Log::log("arduino responded to ping", 1);
             Log::log("message: " + std::string((const char*)packetin->data), 2);
             gotresponse = true;
-            starttime -= 2000;
-            
+            waiting = false;
+        }
+        if(starttime + 1000 <= SDL_GetTicks64()) {
+            waiting = false;
         }
     }
     if(!gotresponse) {

@@ -8,7 +8,7 @@ public:
     ~Networking();
 
     bool connect(const char* address);
-    void sendgas(Sint16 gasvalue);
+    void sendgas(Sint16 gas);
     void sendsteer(Sint16 steervalue);
     void ping(int type);
     void setled();
