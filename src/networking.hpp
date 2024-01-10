@@ -9,9 +9,8 @@ public:
 
     bool connect(const char* address);
     void sendgas(Sint16 gas);
-    void sendsteer(Sint16 steervalue);
+    void sendsteer(Sint16 steer);
     void ping(int type);
-    void setled();
 
     Uint16 gasport, steerport;
 

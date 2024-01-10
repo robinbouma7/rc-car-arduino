@@ -1,29 +1,24 @@
-[16:54:49] initializing game
-[16:54:49] initialized SDL 2.24.0
-[16:54:49] initialized SDL_Image 2.6.2
-[16:54:49] initialized SDL_TTF 2.20.1
-[16:54:49] initialized SDL_Net 2.2.0
-[16:54:49] window created.
-[16:54:49] renderer created.
-[16:54:49] renderer size:
-[16:54:49] width: 1280
-[16:54:49] height: 657
-[16:54:49] base initialized
-[16:54:49] initializing controllers.
-[16:54:49] opened controller: Xbox Series X Controller
-[16:54:49] controller has rumble
-[16:54:49] controller has rumble triggers
-[16:54:49] type: 2
-[16:54:49] controllers initialized.
-[16:54:49] opened udp socket
-[16:54:49] allocated packets
-[16:54:49] gas address: 2075306176 port: 5896
-[16:54:49] pinging throttle port
-[16:54:50] arduino responded to ping
-[16:54:50] message: PONG
-[16:54:50] steer address: 2075306176 port: 6152
-[16:54:50] pinging steering port
-[16:54:50] arduino responded to ping
-[16:54:50] message: PONG
-[16:54:50] initialized
-[16:55:34] closing game
+[11:04:47] initializing game
+[11:04:48] initialized SDL 2.24.0
+[11:04:48] initialized SDL_Image 2.6.2
+[11:04:48] initialized SDL_TTF 2.20.1
+[11:04:48] initialized SDL_Net 2.2.0
+[11:04:48] window created.
+[11:04:48] renderer created.
+[11:04:48] renderer size:
+[11:04:48] width: 1536
+[11:04:48] height: 801
+[11:04:48] base initialized
+[11:04:48] initializing controllers.
+[11:04:48] controllers initialized.
+[11:04:48] opened udp socket
+[11:04:48] allocated packets
+[11:04:48] gas address: 596224192 port: 5896
+[11:04:48] pinging throttle port
+[11:04:48] arduino responded to ping
+[11:04:48] message: PONG from gas
+[11:04:48] steer address: 596224192 port: 6152
+[11:04:48] pinging steering port
+[11:04:48] arduino responded to ping
+[11:04:48] message: PONG from steer
+[11:04:48] initialized

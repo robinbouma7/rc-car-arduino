@@ -1,0 +1,6 @@
+{
+    "port": "COM6",
+    "board": "arduino:renesas_uno:unor4wifi",
+    "programmer": "arduino:atmel_ice",
+    "sketch": "..\\arduino\\rc-car\\rc-car.ino"
+}

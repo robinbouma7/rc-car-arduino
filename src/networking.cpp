@@ -63,14 +63,17 @@ void Networking::sendgas(Sint16 gas) {
     gaspacket->len = strlen((char *)gaspacket->data) + 1;
 
     SDLNet_UDP_Send(socket, -1, gaspacket);
+    //std::cout << "sent gasvalue " << gasvalue << "\n";
 }
-void Networking::sendsteer(Sint16 steervalue) {
+void Networking::sendsteer(Sint16 steer) {
+    int steervalue = ((int)steer / 32767.0F) * 255;
     std::string steerstring = std::to_string((int)steervalue);
 
     steerpacket->data = (unsigned char*)(steerstring.c_str());
     steerpacket->len = strlen((char *)steerpacket->data) + 1;
 
     SDLNet_UDP_Send(socket, -1, steerpacket);
+    //std::cout << "sent steervalue " << steervalue << "\n";
 }
 void Networking::ping(int type) {
     const char* pingmsg = "PING";
@@ -130,7 +133,4 @@ void Networking::ping(int type) {
             steerconnected = false;
         }
     }
-}
-void Networking::setled() {
-    //will maybe add this
 }

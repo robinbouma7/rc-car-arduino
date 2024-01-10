@@ -45,7 +45,10 @@ Sint16 correctedgas;
 Sint16 oldengine;
 Sint16 oldsteer;
 
+bool sentzerogas = false;
 bool sentzero = false;
+int senttimesgas = 0;
+int senttimes = 0;
 
 Uint64 totalgasspeed;
 float gasspeed;
@@ -62,6 +65,10 @@ float framedelay;
 bool usingkeyboard = true;
 
 bool pingpressed;
+
+int frame = 1;
+
+
 
 //steering triangles
 std::vector<std::array<int, 2>> leftborder;
@@ -214,8 +221,8 @@ int WinMain(int argc, char* argv[]) {
     totalgasspeed = (Uint64)tempgs;
 
     int tempss;
-    doc.FirstChildElement("limitgas")->QueryBoolText(&dosteerspeed);
-    doc.FirstChildElement("gasspeed")->QueryIntText(&tempss);
+    doc.FirstChildElement("dosteerspeed")->QueryBoolText(&dosteerspeed);
+    doc.FirstChildElement("steerspeed")->QueryIntText(&tempss);
     totalsteerspeed = (Uint64)tempss;
     if(totalgasspeed <= framedelay || !dogasspeed) {
         if(!dogasspeed) {
@@ -306,6 +313,10 @@ int WinMain(int argc, char* argv[]) {
         update();
         render();
 
+        frame++;
+        if(frame == 59) {
+            frame = 0;
+        }
         if(limitfps) {
             frametime = SDL_GetTicks64() - framestart;
 
@@ -382,6 +393,12 @@ void update() {
         if(!usingkeyboard) {
             throttleaxis = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
             brakeaxis = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+            if(throttleaxis + brakeaxis > 0 && throttleaxis + brakeaxis >= oldengine + (32767 *gasspeed)) {
+                throttleaxis = oldengine + (32767 *gasspeed) - brakeaxis;
+            }
+            if(throttleaxis + brakeaxis < 0 && throttleaxis + brakeaxis <= oldengine - (32767 *gasspeed)) {
+                brakeaxis = oldengine + (32767 *gasspeed) - throttleaxis;
+            }
             xaxis = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
         }
         if(SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_START) && !pingpressed) {
@@ -504,19 +521,16 @@ void update() {
         lefttri[1].position = {600, 550};
         righttri[1].position = {701, 550};
     }
-    if(enginedelta != oldengine) {
-        net->sendgas(enginedelta);
+    
+    net->sendgas(enginedelta);
+
+    if(xaxis > deadzone || xaxis < 0 - deadzone) {
+        net->sendsteer(xaxis);
+        sentzero = false;
     }
-    if(oldsteer != xaxis) {
-        if(xaxis > deadzone || xaxis < 0 - deadzone) {
-            net->sendsteer(xaxis);
-            sentzero = false;
-        }
-        else if(!sentzero) {
-            net->sendsteer(0);
-            sentzero = true;
-        }
-        
+    else if(!sentzero || frame == 0 || frame == 20 || frame == 40) {
+        net->sendsteer(0);
+        sentzero = true;
     }
     if(usingkeyboard && !keys[SDL_SCANCODE_P]) {
         pingpressed = false;

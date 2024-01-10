@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--the ip and ports of the arduino-->
-<ip>192.168.178.123</ip>
+<ip>192.168.137.35</ip>
 <gasport>2071</gasport>
 <steerport>2072</steerport>
 
@@ -12,7 +12,7 @@
 <limitgas>true</limitgas>
 <!--minimum time in ms it takes to go to full throttle-->
 <!--can be used as a sort of traction control-->
-<gasspeed>250</gasspeed>
+<gasspeed>200</gasspeed>
 
 <!--same but with steering-->
 <dosteerspeed>true</dosteerspeed>
